@@ -1,0 +1,14 @@
+{
+  "name": "timar-ai-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Thin MCP adapter for Timar public payment APIs.",
+  "scripts": {
+    "test": "node scripts/run-tests.mjs",
+    "check": "node --experimental-strip-types scripts/check-runtime.mjs"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}
