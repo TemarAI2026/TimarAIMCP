@@ -7,9 +7,33 @@ export interface McpToolResult<TData = unknown> {
   data: TData | null;
 }
 
+export interface ToolInputSchema {
+  type: "object";
+  properties?: Record<string, object>;
+  required?: string[];
+}
+
+export interface ToolOutputSchema {
+  type: "object";
+  properties?: Record<string, object>;
+  required?: string[];
+}
+
+export interface ToolAnnotations {
+  title?: string;
+  readOnlyHint?: boolean;
+  destructiveHint?: boolean;
+  idempotentHint?: boolean;
+  openWorldHint?: boolean;
+}
+
 export interface ToolDefinition<TInput = unknown, TData = unknown> {
   name: string;
+  title?: string;
   description: string;
+  inputSchema: ToolInputSchema;
+  outputSchema?: ToolOutputSchema;
+  annotations?: ToolAnnotations;
   execute(input: unknown): Promise<McpToolResult<TData>>;
 }
 
@@ -45,4 +69,3 @@ export function toFailureResult(params: {
     data: null
   };
 }
-

@@ -6,7 +6,8 @@
   "description": "Thin MCP adapter for Timar public payment APIs.",
   "scripts": {
     "test": "node scripts/run-tests.mjs",
-    "check": "node --experimental-strip-types scripts/check-runtime.mjs"
+    "check": "node --experimental-strip-types scripts/check-runtime.mjs",
+    "start": "node --experimental-strip-types scripts/start-stdio-server.mjs"
   },
   "engines": {
     "node": ">=24"

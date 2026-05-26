@@ -9,10 +9,49 @@ export function createPayoutCreateTool(
 ): ToolDefinition<PayoutCreateInput, PayoutCreateResponse> {
   return {
     name: "payout.create",
+    title: "Create Payout",
     description: "Create a Timar payout order by calling the public payout API.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        environment: { type: "string" },
+        merchantOrderId: { type: "string" },
+        merchantUserId: { type: "string" },
+        amount: { type: "number" },
+        currency: { type: "string" },
+        network: { type: "string" },
+        withdrawAddress: { type: "string" }
+      },
+      required: [
+        "merchantOrderId",
+        "merchantUserId",
+        "amount",
+        "currency",
+        "network",
+        "withdrawAddress"
+      ]
+    },
+    outputSchema: {
+      type: "object",
+      properties: {
+        ok: { type: "boolean" },
+        environment: { type: "string" },
+        requestId: { type: "string" },
+        code: { type: "string" },
+        message: { type: "string" },
+        data: { type: "object" }
+      },
+      required: ["ok", "environment", "requestId", "code", "message"]
+    },
+    annotations: {
+      title: "Create Payout",
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: false
+    },
     execute(input) {
       return router.create(parsePayoutCreateInput(input));
     }
   };
 }
-
