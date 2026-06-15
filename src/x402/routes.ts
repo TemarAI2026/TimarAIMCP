@@ -1,20 +1,25 @@
 /**
- * X402 → MCP route definitions.
+ * X402 → MCP route dispatch layer.
  *
- * Maps HTTP endpoints to MCP tool invocations. The x402 payment middleware
- * wraps each route, so callers must pay before the MCP tool executes.
+ * Responsible for:
+ *   - Wiring up API clients and routers
+ *   - Dispatching verified X402 requests to the correct MCP tool
+ *
+ * Payment model:
+ *   - payment.create / payout.create: amount is dynamic (from request body)
+ *   - Read-only endpoints: fixed $0.001 USDC service fee
+ *
+ * The server.ts layer handles the 402 handshake and payment verification.
+ * Once verified, dispatchToMcp() is called to execute the business logic.
  */
 
-import type { RuntimeConfig } from "../models/public-api-types.ts";
 import type { X402Config } from "./config.ts";
-import { resolvePricing, type ToolPricingMap } from "./pricing.ts";
 import { PaymentApiClient } from "../clients/payment-api-client.ts";
 import { PayoutApiClient } from "../clients/payout-api-client.ts";
 import { BalanceApiClient } from "../clients/balance-api-client.ts";
 import { PaymentRouter } from "../routers/payment-router.ts";
 import { PayoutRouter } from "../routers/payout-router.ts";
 import { BalanceRouter } from "../routers/balance-router.ts";
-import { resolveEnvironment } from "../config/environment-resolver.ts";
 
 export interface X402RouteContext {
   config: X402Config;
@@ -37,43 +42,10 @@ export function createRouteContext(config: X402Config): X402RouteContext {
 }
 
 /**
- * Build the x402 payment middleware route map.
+ * Dispatch a verified X402 request to the correct MCP router.
  *
- * Returns an object compatible with @x402/express `paymentMiddleware()`:
- *   { "POST /v1/payment/create": { accepts: [...], description: "..." }, ... }
- */
-export function buildX402RouteMap(pricing?: ToolPricingMap) {
-  const tools = [
-    { method: "POST", path: "/v1/payment/create", tool: "payment.create" },
-    { method: "GET", path: "/v1/payment/:orderId", tool: "payment.get" },
-    { method: "DELETE", path: "/v1/payment/:orderId", tool: "payment.cancel" },
-    { method: "POST", path: "/v1/payout/create", tool: "payout.create" },
-    { method: "GET", path: "/v1/payout/:orderId", tool: "payout.get" },
-    { method: "GET", path: "/v1/balance", tool: "balance.list" },
-  ] as const;
-
-  const routeMap: Record<string, { accepts: Array<{ network: string; scheme: string; maxAmountRequired: string; asset: string; }>; description: string; }> = {};
-
-  for (const t of tools) {
-    const p = resolvePricing(t.tool, pricing);
-    const key = `${t.method} ${t.path}`;
-
-    routeMap[key] = {
-      accepts: p.networks.map((network) => ({
-        network,
-        scheme: "exact",
-        maxAmountRequired: p.price,
-        asset: network === "solana" ? "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v" : "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-      })),
-      description: p.description,
-    };
-  }
-
-  return routeMap;
-}
-
-/**
- * Dispatch a verified x402 request to the correct MCP router.
+ * Called only after X402 payment has been verified by the server layer.
+ * The `body` object contains the full original request body.
  */
 export async function dispatchToMcp(
   ctx: X402RouteContext,
@@ -81,7 +53,7 @@ export async function dispatchToMcp(
   path: string,
   body: Record<string, unknown>
 ): Promise<unknown> {
-  const { config, paymentRouter, payoutRouter, balanceRouter } = ctx;
+  const { paymentRouter, payoutRouter, balanceRouter } = ctx;
   const env = body.environment as string | undefined;
 
   // POST /v1/payment/create
@@ -92,6 +64,7 @@ export async function dispatchToMcp(
       amount: body.amount as number,
       currency: body.currency as string,
       network: body.network as string,
+      to: body.to as string | undefined,
       returnUrl: body.returnUrl as string | undefined,
       cancelUrl: body.cancelUrl as string | undefined,
       environment: env,
