@@ -7,8 +7,9 @@
  * Step 2: Choose environment (sandbox / production / both)
  * Step 3: Enter domain, API Key, Secret Key
  * Step 4: Set timeout
- * Step 5: Save configuration
- * Step 6: Print AI client integration snippet
+ * Step 5: Configure X402 payment adapter (optional)
+ * Step 6: Save configuration
+ * Step 7: Print AI client integration snippet
  */
 
 import { writeFileSync, mkdirSync, existsSync, readFileSync } from "node:fs";
@@ -111,9 +112,9 @@ const i18n = {
       "  ║                                          ║",
       "  ╚══════════════════════════════════════════╝",
     ],
-    stepLanguage: "🌍 步骤 1/5：选择语言 / Select Language",
-    stepEnv: "📡 步骤 2/5：选择要配置的环境",
-    stepDefaultEnv: "📡 步骤 3/5：默认使用哪个环境？",
+    stepLanguage: "🌍 步骤 1/7：选择语言 / Select Language",
+    stepEnv: "📡 步骤 2/7：选择要配置的环境",
+    stepDefaultEnv: "📡 步骤 3/7：默认使用哪个环境？",
     envSandbox: "Sandbox（沙箱测试环境）— 推荐先配置这个",
     envProduction: "Production（生产环境）",
     envBoth: "两个都配置（Sandbox + Production）",
@@ -146,6 +147,20 @@ const i18n = {
     ],
     selectNumber: "请选择 (输入数字)",
     setupFailed: "配置失败",
+    stepX402: "💳 步骤 4/7：是否配置 X402 支付协议适配？",
+    x402Yes: "是，配置 X402（让 AI Agent 用稳定币按次付费调用 API）",
+    x402No: "跳过，暂不需要",
+    x402PayTo: "💰 收款钱包地址（EVM 或 Solana）",
+    x402PayToRequired: "⚠️  钱包地址不能为空",
+    x402Facilitator: "🔗 Facilitator 服务地址",
+    x402Port: "🌐 HTTP 服务端口",
+    x402Networks: "📡 支持的支付网络",
+    x402NetworkBase: "Base（推荐，低 gas）",
+    x402NetworkEthereum: "Ethereum",
+    x402NetworkSolana: "Solana",
+    x402Saved: "✅ X402 支付适配配置完成！",
+    x402Skipped: "⏭️  跳过 X402 配置",
+    stepTimeout: "⏱️  步骤 5/7：请求超时设置",
   },
 
   "zh-TW": {
@@ -160,9 +175,9 @@ const i18n = {
       "  ║                                          ║",
       "  ╚══════════════════════════════════════════╝",
     ],
-    stepLanguage: "🌍 步驟 1/5：選擇語言 / Select Language",
-    stepEnv: "📡 步驟 2/5：選擇要設定的環境",
-    stepDefaultEnv: "📡 步驟 3/5：預設使用哪個環境？",
+    stepLanguage: "🌍 步驟 1/7：選擇語言 / Select Language",
+    stepEnv: "📡 步驟 2/7：選擇要設定的環境",
+    stepDefaultEnv: "📡 步驟 3/7：預設使用哪個環境？",
     envSandbox: "Sandbox（沙箱測試環境）— 建議先設定這個",
     envProduction: "Production（正式環境）",
     envBoth: "兩個都設定（Sandbox + Production）",
@@ -195,6 +210,20 @@ const i18n = {
     ],
     selectNumber: "請選擇 (輸入數字)",
     setupFailed: "設定失敗",
+    stepX402: "💳 步驟 4/7：是否設定 X402 支付協議適配？",
+    x402Yes: "是，設定 X402（讓 AI Agent 用穩定幣按次付費呼叫 API）",
+    x402No: "跳過，暫時不需要",
+    x402PayTo: "💰 收款錢包地址（EVM 或 Solana）",
+    x402PayToRequired: "⚠️  錢包地址不能為空",
+    x402Facilitator: "🔗 Facilitator 服務地址",
+    x402Port: "🌐 HTTP 服務連接埠",
+    x402Networks: "📡 支援的支付網路",
+    x402NetworkBase: "Base（建議，低 gas）",
+    x402NetworkEthereum: "Ethereum",
+    x402NetworkSolana: "Solana",
+    x402Saved: "✅ X402 支付適配設定完成！",
+    x402Skipped: "⏭️  跳過 X402 設定",
+    stepTimeout: "⏱️  步驟 5/7：請求逾時設定",
   },
 
   "en": {
@@ -209,9 +238,9 @@ const i18n = {
       "  ║                                          ║",
       "  ╚══════════════════════════════════════════╝",
     ],
-    stepLanguage: "🌍 Step 1/5: Choose Language / 选择语言",
-    stepEnv: "📡 Step 2/5: Choose environment to configure",
-    stepDefaultEnv: "📡 Step 3/5: Which environment should be default?",
+    stepLanguage: "🌍 Step 1/7: Choose Language / 选择语言",
+    stepEnv: "📡 Step 2/7: Choose environment to configure",
+    stepDefaultEnv: "📡 Step 3/7: Which environment should be default?",
     envSandbox: "Sandbox (Test environment) — Recommended to start",
     envProduction: "Production (Live environment)",
     envBoth: "Both (Sandbox + Production)",
@@ -244,6 +273,20 @@ const i18n = {
     ],
     selectNumber: "Select (enter number)",
     setupFailed: "Setup failed",
+    stepX402: "💳 Step 4/7: Configure X402 payment protocol adapter?",
+    x402Yes: "Yes, configure X402 (let AI Agents pay per API call with stablecoins)",
+    x402No: "Skip, not needed now",
+    x402PayTo: "💰 Wallet address to receive payments (EVM or Solana)",
+    x402PayToRequired: "⚠️  Wallet address is required",
+    x402Facilitator: "🔗 Facilitator service URL",
+    x402Port: "🌐 HTTP server port",
+    x402Networks: "📡 Supported payment networks",
+    x402NetworkBase: "Base (Recommended, low gas)",
+    x402NetworkEthereum: "Ethereum",
+    x402NetworkSolana: "Solana",
+    x402Saved: "✅ X402 payment adapter configured!",
+    x402Skipped: "⏭️  X402 configuration skipped",
+    stepTimeout: "⏱️  Step 5/7: Request timeout settings",
   },
 };
 
@@ -323,6 +366,53 @@ async function stepDefaultEnvironment(rl, availableEnvs, t) {
   }));
 
   return choose(rl, t.stepDefaultEnv, options, t);
+}
+
+// ─── Step 4: X402 Configuration (optional) ──────────────────────
+
+async function stepConfigureX402(rl, t) {
+  const wantX402 = await choose(rl, t.stepX402, [
+    { value: "yes", label: t.x402Yes },
+    { value: "no", label: t.x402No },
+  ], t);
+
+  if (wantX402 === "no") {
+    log(`${DIM}  ${t.x402Skipped}${RESET}`);
+    return null;
+  }
+
+  log("");
+  log(`${BOLD}${YELLOW}  ── X402 Payment Configuration ──${RESET}`);
+  log("");
+
+  const payTo = await question(rl, t.x402PayTo, "");
+  if (!payTo) {
+    log(`${YELLOW}  ${t.x402PayToRequired}${RESET}`);
+    return stepConfigureX402(rl, t);
+  }
+
+  const facilitatorUrl = await question(rl, t.x402Facilitator, "https://facilitator.x402.org");
+  const port = await question(rl, t.x402Port, "3402");
+
+  const networkChoice = await choose(rl, t.x402Networks, [
+    { value: "base", label: t.x402NetworkBase },
+    { value: "ethereum", label: t.x402NetworkEthereum },
+    { value: "solana", label: t.x402NetworkSolana },
+    { value: "all", label: `Base + Ethereum + Solana` },
+  ], t);
+
+  const networks = networkChoice === "all"
+    ? ["base", "ethereum", "solana"]
+    : [networkChoice];
+
+  log(`${GREEN}  ${t.x402Saved}${RESET}`);
+
+  return {
+    payTo,
+    facilitatorUrl,
+    port: parseInt(port, 10) || 3402,
+    networks,
+  };
 }
 
 // ─── Step 5: Save config ───────────────────────────────────────
@@ -450,6 +540,9 @@ async function main() {
     // Step 4: Default environment
     const defaultEnvironment = await stepDefaultEnvironment(rl, envNames, t);
 
+    // Step 4: Configure X402 (optional)
+    const x402Config = await stepConfigureX402(rl, t);
+
     // Step 5: Save config (includes language preference)
     const projectDir = resolve(import.meta.dirname, "..");
     const configDir = join(projectDir, "config");
@@ -458,6 +551,11 @@ async function main() {
       defaultEnvironment,
       environments,
     };
+
+    if (x402Config) {
+      config.x402 = x402Config;
+    }
+
     const configPath = stepSaveConfig(config, configDir);
 
     // Step 6: Print integration snippet

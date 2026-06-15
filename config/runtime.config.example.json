@@ -14,5 +14,11 @@
       "secretKey": "your-production-secret-key",
       "timeoutMs": 5000
     }
+  },
+  "x402": {
+    "payTo": "0xYourWalletAddress",
+    "facilitatorUrl": "https://facilitator.x402.org",
+    "port": 3402,
+    "networks": ["base", "ethereum", "solana"]
   }
 }

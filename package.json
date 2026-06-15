@@ -1,16 +1,23 @@
 {
   "name": "timar-ai-mcp",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
-  "description": "Thin MCP adapter for Timar public payment APIs.",
+  "description": "MCP adapter & X402 payment protocol adapter for Timar public payment APIs.",
   "scripts": {
     "test": "node scripts/run-tests.mjs",
     "check": "node --experimental-strip-types scripts/check-runtime.mjs",
     "start": "node --experimental-strip-types scripts/start-stdio-server.mjs",
+    "start:x402": "node --experimental-strip-types scripts/start-x402-server.mjs",
     "setup": "node --experimental-strip-types scripts/setup.mjs"
   },
   "engines": {
     "node": ">=24"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "@x402/express": "^2.15.0",
+    "@x402/core": "^2.15.0",
+    "@x402/evm": "^2.15.0"
   }
 }
