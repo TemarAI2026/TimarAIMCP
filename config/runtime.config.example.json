@@ -1,0 +1,18 @@
+{
+  "language": "zh-CN",
+  "defaultEnvironment": "sandbox",
+  "environments": {
+    "sandbox": {
+      "baseUrl": "https://sandbox-api.timar.io",
+      "apiKey": "your-sandbox-api-key",
+      "secretKey": "your-sandbox-secret-key",
+      "timeoutMs": 5000
+    },
+    "production": {
+      "baseUrl": "https://api.timar.io",
+      "apiKey": "your-production-api-key",
+      "secretKey": "your-production-secret-key",
+      "timeoutMs": 5000
+    }
+  }
+}
