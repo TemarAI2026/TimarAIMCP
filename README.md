@@ -8,8 +8,8 @@ This project provides **two modes** of accessing Timar APIs:
 
 | Mode | Transport | Use Case |
 |------|-----------|----------|
-| **MCP Server** | STDIO | Local AI assistants (Claude Desktop, Cursor) |
-| **X402 Adapter** | HTTP | AI Agents paying per call with stablecoins (USDC) |
+| **MCP Server** | STDIO | Local AI assistants (Claude Desktop, Cursor) — API Key auth |
+| **X402 Adapter** | HTTP | AI Agents with user-authorized wallets — X402 on-chain payment for transfers |
 
 **It is:**
 - An MCP server (stdio transport, no deployment needed)
@@ -34,21 +34,23 @@ The setup wizard supports 3 languages:
 
 ## 🛠️ Supported Tools
 
-| Tool | Description | X402 Price |
-|------|-------------|------------|
-| `payment.create` | Create a new payment order | $0.01 |
-| `payment.get` | Get payment order details | $0.001 |
-| `payment.cancel` | Cancel a payment order | $0.001 |
-| `payout.create` | Create a new payout order | $0.01 |
-| `payout.get` | Get payout order details | $0.001 |
-| `balance.list` | List balances for all currencies | $0.001 |
+| Tool | Description | X402 Mode |
+|------|-------------|-----------|
+| `payment.create` | Create a new payment order | **Dynamic** — Agent pays actual transfer amount to Timar's receiveAddress |
+| `payment.get` | Get payment order details | None — MCP API Key auth, no payment |
+| `payment.cancel` | Cancel a payment order | None — MCP API Key auth, no payment |
+| `payout.create` | Create a new payout order | **Dynamic** — Agent pays actual payout amount to withdrawAddress |
+| `payout.get` | Get payout order details | None — MCP API Key auth, no payment |
+| `balance.list` | List balances for all currencies | None — MCP API Key auth, no payment |
+
+> **X402 only applies to transfer operations** (`payment.create`, `payout.create`). The X402 payment IS the actual business transfer — not a service fee. The Agent uses a user-authorized wallet to pay USDC directly to the address returned by Timar API. Query/cancel operations are free (protected by MCP-layer API Key).
 
 ## 📋 Prerequisites
 
 - Node.js 24+ (for TypeScript native support)
 - Timar merchant account with API credentials
 - MCP-compatible AI assistant (Claude Desktop, Cursor, Cline, etc.)
-- For X402 mode: a wallet address to receive stablecoin payments
+- For X402 mode: a user-authorized wallet (Agent signs and broadcasts on-chain payments)
 
 ## 🚀 Quick Start (3 Steps)
 
@@ -165,7 +167,7 @@ cp config/runtime.config.example.json config/runtime.config.json
 | `environments.<env>.apiKey` | Yes | API key |
 | `environments.<env>.secretKey` | Yes | Secret key |
 | `environments.<env>.timeoutMs` | No | Request timeout in ms (default: 5000) |
-| `x402.payTo` | X402 only | Wallet address to receive payments |
+| `x402.payTo` | X402 only | Fallback wallet address (optional — for receiveAddress extraction, Timar API provides the actual address) |
 | `x402.facilitatorUrl` | No | Facilitator URL (default: `https://facilitator.x402.org`) |
 | `x402.port` | No | HTTP server port (default: 3402) |
 | `x402.networks` | No | Payment networks (default: `["base","ethereum","solana"]`) |
@@ -218,19 +220,22 @@ Config file location: `.cursor/mcp.json` in project root
 
 ## 💳 X402 Protocol Adapter
 
-The X402 adapter exposes Timar APIs as pay-per-use HTTP endpoints. AI Agents can pay with stablecoins (USDC) on each request — no API keys or subscriptions needed.
+The X402 adapter exposes Timar APIs as HTTP endpoints. Transfer operations (`payment.create`, `payout.create`) require the Agent to complete an on-chain USDC payment — this IS the actual business transfer, not a service fee. Query/cancel operations are free (MCP API Key auth).
 
 ### Architecture
 
 ```
-AI Agent (x402 client)
-    ↓ HTTP request
-X402 Protocol Adapter (this server)
-    ↓ 402 → pay → verify → settle
-    ↓ internal call
-MCP Routers (payment/payout/balance)
-    ↓ HMAC-SHA256 signed request
-Timar Public API
+AI Agent (holds user-authorized wallet)
+    ↓ POST /v1/payment/create (no X-PAYMENT header)
+X402 Protocol Adapter
+    ↓ Phase 1: Call Timar API → get receiveAddress + amount
+    ↓ Return 402 { payTo: receiveAddress, amount: actual transfer amount }
+AI Agent
+    ↓ On-chain: pay USDC to receiveAddress
+    ↓ POST /v1/payment/create (with X-PAYMENT proof)
+X402 Protocol Adapter
+    ↓ Phase 2: Verify on-chain payment via facilitator
+    ↓ Confirm order → return result
 ```
 
 ### Starting the X402 Server
@@ -247,14 +252,14 @@ TIMAR_MCP_CONFIG=/path/to/config.json npm run start:x402
 
 ### X402 Endpoints
 
-| Method | Path | MCP Tool | Price |
-|--------|------|----------|-------|
-| `POST` | `/v1/payment/create` | `payment.create` | $0.01 |
-| `GET` | `/v1/payment/:orderId` | `payment.get` | $0.001 |
-| `DELETE` | `/v1/payment/:orderId` | `payment.cancel` | $0.001 |
-| `POST` | `/v1/payout/create` | `payout.create` | $0.01 |
-| `GET` | `/v1/payout/:orderId` | `payout.get` | $0.001 |
-| `GET` | `/v1/balance` | `balance.list` | $0.001 |
+| Method | Path | MCP Tool | Payment |
+|--------|------|----------|---------|
+| `POST` | `/v1/payment/create` | `payment.create` | **X402 dynamic** (pay actual amount to receiveAddress) |
+| `GET` | `/v1/payment/:orderId` | `payment.get` | None (MCP API Key) |
+| `DELETE` | `/v1/payment/:orderId` | `payment.cancel` | None (MCP API Key) |
+| `POST` | `/v1/payout/create` | `payout.create` | **X402 dynamic** (pay actual amount to withdrawAddress) |
+| `GET` | `/v1/payout/:orderId` | `payout.get` | None (MCP API Key) |
+| `GET` | `/v1/balance` | `balance.list` | None (MCP API Key) |
 
 Free endpoints (no payment required):
 
@@ -263,16 +268,24 @@ Free endpoints (no payment required):
 | `GET` | `/health` | Health check |
 | `GET` | `/v1/tools` | List available tools and pricing |
 
-### Payment Flow Example
+### Payment Flow Example (payment.create)
 
 ```
-1. AI Agent sends:  POST /v1/payment/create
-2. Server returns:  402 Payment Required + PAYMENT-REQUIRED header
-3. AI Agent pays:   0.01 USDC via x402 protocol
-4. AI Agent sends:  POST /v1/payment/create + PAYMENT-SIGNATURE header
-5. Server verifies: payment via facilitator
-6. Server executes: payment.create via MCP router
-7. Server returns:  200 OK + result + PAYMENT-RESPONSE header
+1. AI Agent sends:  POST /v1/payment/create { amount: 100, currency: "USDT", network: "base" }
+2. Server calls:   Timar API → creates order → gets receiveAddress
+3. Server returns:  402 { payTo: "0xTimarReceiveAddress", amount: "100", network: "base" }
+4. AI Agent pays:   100 USDC to receiveAddress via user-authorized wallet
+5. AI Agent sends:  POST /v1/payment/create + X-PAYMENT header (on-chain proof)
+6. Server verifies: payment via facilitator
+7. Server returns:  200 OK + order confirmed
+```
+
+### Query Flow Example (no payment needed)
+
+```
+1. AI Agent sends:  GET /v1/payment/:orderId
+2. Server calls:   MCP router → Timar API (API Key auth)
+3. Server returns:  200 OK + order details
 ```
 
 ### Supported Networks
@@ -369,7 +382,7 @@ npm run setup
 
 ### X402 server fails to start
 
-- Ensure `x402.payTo` is set in your config (wallet address)
+- Ensure `x402` section is set in your config
 - Install dependencies: `npm install`
 - Check port 3402 is not already in use
 
