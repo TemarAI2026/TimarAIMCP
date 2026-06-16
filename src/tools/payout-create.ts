@@ -10,7 +10,7 @@ export function createPayoutCreateTool(
   return {
     name: "payout.create",
     title: "Create Payout",
-    description: "Create a Timar payout order by calling the public payout API.",
+    description: "Create a Temar payout order by calling the public payout API.",
     inputSchema: {
       type: "object",
       properties: {

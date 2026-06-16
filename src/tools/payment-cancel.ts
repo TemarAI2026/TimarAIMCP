@@ -7,7 +7,7 @@ export function createPaymentCancelTool(router: PaymentRouter): ToolDefinition<P
   return {
     name: "payment.cancel",
     title: "Cancel Payment",
-    description: "Cancel a Timar payment order by platform order ID.",
+    description: "Cancel a Temar payment order by platform order ID.",
     inputSchema: {
       type: "object",
       properties: {

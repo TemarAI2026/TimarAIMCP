@@ -6,7 +6,7 @@
  *   - Dispatching verified X402 requests to the correct MCP tool
  *
  * Payment model:
- *   - payment.create / payout.create: dynamic — amount from Timar API response
+ *   - payment.create / payout.create: dynamic — amount from Temar API response
  *   - Read-only endpoints: no X402 payment, MCP API Key auth only
  *
  * The server.ts layer handles the 402 handshake and payment verification.

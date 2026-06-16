@@ -1,9 +1,9 @@
 {
-  "name": "timar-ai-mcp",
+  "name": "temar-ai-mcp",
   "version": "0.2.0",
   "private": true,
   "type": "module",
-  "description": "MCP adapter & X402 payment protocol adapter for Timar public payment APIs.",
+  "description": "MCP adapter & X402 payment protocol adapter for Temar public payment APIs.",
   "scripts": {
     "test": "node scripts/run-tests.mjs",
     "check": "node --experimental-strip-types scripts/check-runtime.mjs",

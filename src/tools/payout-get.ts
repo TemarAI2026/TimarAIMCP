@@ -10,7 +10,7 @@ export function createPayoutGetTool(
   return {
     name: "payout.get",
     title: "Get Payout",
-    description: "Get a Timar payout order by platform order ID.",
+    description: "Get a Temar payout order by platform order ID.",
     inputSchema: {
       type: "object",
       properties: {

@@ -7,12 +7,12 @@
  *   ┌─ Dynamic X402 (payment.create / payout.create) ─────────────────────┐
  *   │  Two-phase flow:                                                      │
  *   │  Phase 1 (no X-PAYMENT header):                                      │
- *   │    → Call Timar API to create the order                              │
+ *   │    → Call Temar API to create the order                              │
  *   │    → Extract receiveAddress + amount from response                   │
  *   │    → Return 402 with { payTo: receiveAddress, amount }               │
  *   │  Phase 2 (X-PAYMENT header present):                                 │
  *   │    → Verify on-chain payment via facilitator                         │
- *   │    → Re-call Timar API to confirm order                              │
+ *   │    → Re-call Temar API to confirm order                              │
  *   │    → Return final business result                                    │
  *   └──────────────────────────────────────────────────────────────────────┘
  *
@@ -74,7 +74,7 @@ const USDC_ASSETS: Record<string, string> = {
 
 /**
  * Build a 402 Payment Required response payload.
- * @param payTo   - who receives the payment (merchant wallet or Timar wallet)
+ * @param payTo   - who receives the payment (merchant wallet or Temar wallet)
  * @param amount  - USDC amount as string (e.g. "100.00")
  * @param network - payment network
  * @param description - human-readable reason
@@ -141,7 +141,7 @@ export async function startX402Server(config: X402Config): Promise<void> {
 
     // ─── Health check ───────────────────────────────────────────────────────
     app.get("/health", (_req, res) => {
-      res.json({ status: "ok", service: "timar-x402-adapter", version: "2.0" });
+      res.json({ status: "ok", service: "temar-x402-adapter", version: "2.0" });
     });
 
     // ─── Tool listing ────────────────────────────────────────────────────────
@@ -191,8 +191,8 @@ export async function startX402Server(config: X402Config): Promise<void> {
     // ─── POST /v1/payment/create — Two-phase X402 flow ─────────────────────
     //
     // Phase 1 (no X-PAYMENT):
-    //   Call Timar API to create the order → get receiveAddress + amount
-    //   Return 402 with real receiveAddress from Timar (not from request body)
+    //   Call Temar API to create the order → get receiveAddress + amount
+    //   Return 402 with real receiveAddress from Temar (not from request body)
     //
     // Phase 2 (X-PAYMENT present):
     //   Verify on-chain payment → confirm order is paid → return result
@@ -201,7 +201,7 @@ export async function startX402Server(config: X402Config): Promise<void> {
       const hasPayment = !!req.headers["x-payment"];
 
       if (!hasPayment) {
-        // Phase 1: Create the order first, extract address from Timar response
+        // Phase 1: Create the order first, extract address from Temar response
         try {
           const orderResult = await dispatchToMcp(ctx, "POST", "/v1/payment/create", req.body) as {
             ok: boolean;
@@ -220,7 +220,7 @@ export async function startX402Server(config: X402Config): Promise<void> {
           const { receiveAddress, amount, network } = orderResult.data;
           const payNetwork = (network ?? config.networks[0] ?? "base").toLowerCase();
 
-          // Return 402 with real receiveAddress from Timar
+          // Return 402 with real receiveAddress from Temar
           res.status(402).json(
             build402Payload(
               receiveAddress,
@@ -255,8 +255,8 @@ export async function startX402Server(config: X402Config): Promise<void> {
     // ─── POST /v1/payout/create — Two-phase X402 flow ──────────────────────
     //
     // Phase 1 (no X-PAYMENT):
-    //   Call Timar API → get withdrawAddress + amount from response
-    //   Return 402 with real withdrawAddress from Timar
+    //   Call Temar API → get withdrawAddress + amount from response
+    //   Return 402 with real withdrawAddress from Temar
     //
     // Phase 2 (X-PAYMENT present):
     //   Verify on-chain payment → return payout result
@@ -265,7 +265,7 @@ export async function startX402Server(config: X402Config): Promise<void> {
       const hasPayment = !!req.headers["x-payment"];
 
       if (!hasPayment) {
-        // Phase 1: Create payout order → extract withdrawAddress from Timar
+        // Phase 1: Create payout order → extract withdrawAddress from Temar
         try {
           const orderResult = await dispatchToMcp(ctx, "POST", "/v1/payout/create", req.body) as {
             ok: boolean;

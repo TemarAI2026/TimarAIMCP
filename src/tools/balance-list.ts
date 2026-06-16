@@ -10,7 +10,7 @@ export function createBalanceListTool(
   return {
     name: "balance.list",
     title: "List Balances",
-    description: "List Timar balances for the selected environment.",
+    description: "List Temar balances for the selected environment.",
     inputSchema: {
       type: "object",
       properties: {

@@ -8,7 +8,7 @@
  *
  * Usage:
  *   node scripts/start-x402-server.mjs
- *   TIMAR_MCP_CONFIG=/path/to/config.json node scripts/start-x402-server.mjs
+ *   TEMAR_MCP_CONFIG=/path/to/config.json node scripts/start-x402-server.mjs
  */
 
 import { readFileSync, existsSync } from "fs";
@@ -47,7 +47,7 @@ function getMsg(lang) {
 // ── Config loading ─────────────────────────────────────────────
 
 function findConfigPath() {
-  const envPath = process.env.TIMAR_MCP_CONFIG;
+  const envPath = process.env.TEMAR_MCP_CONFIG;
   if (envPath && existsSync(envPath)) return envPath;
 
   const defaultPath = resolve(__dirname, "..", "config", "runtime.config.json");

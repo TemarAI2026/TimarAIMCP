@@ -2,7 +2,7 @@
  * X402 pricing types — legacy from fixed-price mode.
  *
  * ⚠️ NOTE: The current architecture uses DYNAMIC pricing for transfer operations.
- *   - payment.create / payout.create: The 402 amount comes from Timar API response
+ *   - payment.create / payout.create: The 402 amount comes from Temar API response
  *     (actual transfer amount), NOT from this pricing table.
  *   - Read-only endpoints: No X402 payment at all (MCP API Key auth).
  *

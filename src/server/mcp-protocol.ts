@@ -5,7 +5,7 @@ import type { McpToolResult, ToolDefinition } from "../models/tool-outputs.ts";
 import type { McpServerRuntime } from "./index.ts";
 
 const SUPPORTED_PROTOCOL_VERSION = "2025-11-25";
-const SERVER_NAME = "timar-ai-mcp";
+const SERVER_NAME = "temar-ai-mcp";
 const SERVER_VERSION = "0.1.0";
 
 type RequestId = string | number | null;
@@ -170,7 +170,7 @@ export async function handleMcpMessage(
           version: SERVER_VERSION
         },
         instructions:
-          "Use payment.create/get/cancel, payout.create/get, and balance.list to call Timar public APIs through this thin MCP adapter."
+          "Use payment.create/get/cancel, payout.create/get, and balance.list to call Temar public APIs through this thin MCP adapter."
       });
     }
 

@@ -10,7 +10,7 @@ export function createPaymentCreateTool(
   return {
     name: "payment.create",
     title: "Create Payment",
-    description: "Create a Timar payment order by calling the public payment API.",
+    description: "Create a Temar payment order by calling the public payment API.",
     inputSchema: {
       type: "object",
       properties: {

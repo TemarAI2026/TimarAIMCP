@@ -1,10 +1,10 @@
-# Timar AI MCP Server
+# Temar AI MCP Server
 
-A Model Context Protocol (MCP) server and X402 payment protocol adapter for Timar payment, payout, and balance APIs.
+A Model Context Protocol (MCP) server and X402 payment protocol adapter for Temar payment, payout, and balance APIs.
 
 ## 🎯 What This Is
 
-This project provides **two modes** of accessing Timar APIs:
+This project provides **two modes** of accessing Temar APIs:
 
 | Mode | Transport | Use Case |
 |------|-----------|----------|
@@ -20,7 +20,7 @@ This project provides **two modes** of accessing Timar APIs:
 **It is NOT:**
 - A payment engine
 - A business-rule host
-- A replacement for Timar's public APIs
+- A replacement for Temar's public APIs
 
 ## 🌍 Supported Languages
 
@@ -36,19 +36,19 @@ The setup wizard supports 3 languages:
 
 | Tool | Description | X402 Mode |
 |------|-------------|-----------|
-| `payment.create` | Create a new payment order | **Dynamic** — Agent pays actual transfer amount to Timar's receiveAddress |
+| `payment.create` | Create a new payment order | **Dynamic** — Agent pays actual transfer amount to Temar's receiveAddress |
 | `payment.get` | Get payment order details | None — MCP API Key auth, no payment |
 | `payment.cancel` | Cancel a payment order | None — MCP API Key auth, no payment |
 | `payout.create` | Create a new payout order | **Dynamic** — Agent pays actual payout amount to withdrawAddress |
 | `payout.get` | Get payout order details | None — MCP API Key auth, no payment |
 | `balance.list` | List balances for all currencies | None — MCP API Key auth, no payment |
 
-> **X402 only applies to transfer operations** (`payment.create`, `payout.create`). The X402 payment IS the actual business transfer — not a service fee. The Agent uses a user-authorized wallet to pay USDC directly to the address returned by Timar API. Query/cancel operations are free (protected by MCP-layer API Key).
+> **X402 only applies to transfer operations** (`payment.create`, `payout.create`). The X402 payment IS the actual business transfer — not a service fee. The Agent uses a user-authorized wallet to pay USDC directly to the address returned by Temar API. Query/cancel operations are free (protected by MCP-layer API Key).
 
 ## 📋 Prerequisites
 
 - Node.js 24+ (for TypeScript native support)
-- Timar merchant account with API credentials
+- Temar merchant account with API credentials
 - MCP-compatible AI assistant (Claude Desktop, Cursor, Cline, etc.)
 - For X402 mode: a user-authorized wallet (Agent signs and broadcasts on-chain payments)
 
@@ -57,8 +57,8 @@ The setup wizard supports 3 languages:
 ### 1. Clone and Install
 
 ```bash
-git clone https://github.com/TemarAI2026/TimarAIMCP.git
-cd TimarAIMCP
+git clone https://github.com/TemarAI2026/TemarAIMCP.git
+cd TemarAIMCP
 npm install
 ```
 
@@ -83,7 +83,7 @@ Example walkthrough (简体中文):
 
 ```
   ╔══════════════════════════════════════════╗
-  ║       🚀 Timar AI MCP 配置向导          ║
+  ║       🚀 Temar AI MCP 配置向导          ║
   ╚══════════════════════════════════════════╝
 
   🌍 步骤 1/7：选择语言 / Select Language
@@ -167,7 +167,7 @@ cp config/runtime.config.example.json config/runtime.config.json
 | `environments.<env>.apiKey` | Yes | API key |
 | `environments.<env>.secretKey` | Yes | Secret key |
 | `environments.<env>.timeoutMs` | No | Request timeout in ms (default: 5000) |
-| `x402.payTo` | X402 only | Fallback wallet address (optional — for receiveAddress extraction, Timar API provides the actual address) |
+| `x402.payTo` | X402 only | Fallback wallet address (optional — for receiveAddress extraction, Temar API provides the actual address) |
 | `x402.facilitatorUrl` | No | Facilitator URL (default: `https://facilitator.x402.org`) |
 | `x402.port` | No | HTTP server port (default: 3402) |
 | `x402.networks` | No | Payment networks (default: `["base","ethereum","solana"]`) |
@@ -187,11 +187,11 @@ Config file location:
 ```json
 {
   "mcpServers": {
-    "timar-ai": {
+    "temar-ai": {
       "command": "node",
-      "args": ["/absolute/path/to/TimarAIMCP/scripts/start-stdio-server.mjs"],
+      "args": ["/absolute/path/to/TemarAIMCP/scripts/start-stdio-server.mjs"],
       "env": {
-        "TIMAR_MCP_CONFIG": "/absolute/path/to/TimarAIMCP/config/runtime.config.json"
+        "TEMAR_MCP_CONFIG": "/absolute/path/to/TemarAIMCP/config/runtime.config.json"
       }
     }
   }
@@ -205,11 +205,11 @@ Config file location: `.cursor/mcp.json` in project root
 ```json
 {
   "mcpServers": {
-    "timar-ai": {
+    "temar-ai": {
       "command": "node",
-      "args": ["/absolute/path/to/TimarAIMCP/scripts/start-stdio-server.mjs"],
+      "args": ["/absolute/path/to/TemarAIMCP/scripts/start-stdio-server.mjs"],
       "env": {
-        "TIMAR_MCP_CONFIG": "/absolute/path/to/TimarAIMCP/config/runtime.config.json"
+        "TEMAR_MCP_CONFIG": "/absolute/path/to/TemarAIMCP/config/runtime.config.json"
       }
     }
   }
@@ -220,7 +220,7 @@ Config file location: `.cursor/mcp.json` in project root
 
 ## 💳 X402 Protocol Adapter
 
-The X402 adapter exposes Timar APIs as HTTP endpoints. Transfer operations (`payment.create`, `payout.create`) require the Agent to complete an on-chain USDC payment — this IS the actual business transfer, not a service fee. Query/cancel operations are free (MCP API Key auth).
+The X402 adapter exposes Temar APIs as HTTP endpoints. Transfer operations (`payment.create`, `payout.create`) require the Agent to complete an on-chain USDC payment — this IS the actual business transfer, not a service fee. Query/cancel operations are free (MCP API Key auth).
 
 ### Architecture
 
@@ -228,7 +228,7 @@ The X402 adapter exposes Timar APIs as HTTP endpoints. Transfer operations (`pay
 AI Agent (holds user-authorized wallet)
     ↓ POST /v1/payment/create (no X-PAYMENT header)
 X402 Protocol Adapter
-    ↓ Phase 1: Call Timar API → get receiveAddress + amount
+    ↓ Phase 1: Call Temar API → get receiveAddress + amount
     ↓ Return 402 { payTo: receiveAddress, amount: actual transfer amount }
 AI Agent
     ↓ On-chain: pay USDC to receiveAddress
@@ -247,7 +247,7 @@ npm run start:x402
 Or with a custom config path:
 
 ```bash
-TIMAR_MCP_CONFIG=/path/to/config.json npm run start:x402
+TEMAR_MCP_CONFIG=/path/to/config.json npm run start:x402
 ```
 
 ### X402 Endpoints
@@ -272,8 +272,8 @@ Free endpoints (no payment required):
 
 ```
 1. AI Agent sends:  POST /v1/payment/create { amount: 100, currency: "USDT", network: "base" }
-2. Server calls:   Timar API → creates order → gets receiveAddress
-3. Server returns:  402 { payTo: "0xTimarReceiveAddress", amount: "100", network: "base" }
+2. Server calls:   Temar API → creates order → gets receiveAddress
+3. Server returns:  402 { payTo: "0xTemarReceiveAddress", amount: "100", network: "base" }
 4. AI Agent pays:   100 USDC to receiveAddress via user-authorized wallet
 5. AI Agent sends:  POST /v1/payment/create + X-PAYMENT header (on-chain proof)
 6. Server verifies: payment via facilitator
@@ -284,7 +284,7 @@ Free endpoints (no payment required):
 
 ```
 1. AI Agent sends:  GET /v1/payment/:orderId
-2. Server calls:   MCP router → Timar API (API Key auth)
+2. Server calls:   MCP router → Temar API (API Key auth)
 3. Server returns:  200 OK + order details
 ```
 
@@ -309,13 +309,13 @@ npm test
 ### Quick Test MCP Server
 
 ```bash
-TIMAR_MCP_CONFIG=config/runtime.config.json npm start
+TEMAR_MCP_CONFIG=config/runtime.config.json npm start
 ```
 
 ### Quick Test X402 Server
 
 ```bash
-TIMAR_MCP_CONFIG=config/runtime.config.json npm run start:x402
+TEMAR_MCP_CONFIG=config/runtime.config.json npm run start:x402
 ```
 
 ## 📝 Tool Input Examples

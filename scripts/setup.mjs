@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Timar AI MCP - Interactive Setup Wizard (i18n)
+ * Temar AI MCP - Interactive Setup Wizard (i18n)
  *
  * Step 1: Choose language (简体中文 / 繁體中文 / English)
  * Step 2: Choose environment (sandbox / production / both)
@@ -105,7 +105,7 @@ const i18n = {
     banner: [
       "  ╔══════════════════════════════════════════╗",
       "  ║                                          ║",
-      "  ║       🚀 Timar AI MCP 配置向导          ║",
+      "  ║       🚀 Temar AI MCP 配置向导          ║",
       "  ║                                          ║",
       "  ║   接下来将引导你完成 MCP 服务器配置     ║",
       "  ║   大约需要 2 分钟                        ║",
@@ -120,7 +120,7 @@ const i18n = {
     envBoth: "两个都配置（Sandbox + Production）",
     envRecommended: "（推荐）",
     configSection: (envName) => `── 配置 ${envName} 环境 ──`,
-    configHint: (envName) => `请输入你的 Timar ${envName} 环境信息`,
+    configHint: (envName) => `请输入你的 Temar ${envName} 环境信息`,
     domainPrompt: (envName) => `🌐 ${envName} API 域名`,
     apiKeyPrompt: (envName) => `🔑 ${envName} API Key`,
     secretKeyPrompt: (envName) => `🔐 ${envName} Secret Key`,
@@ -168,7 +168,7 @@ const i18n = {
     banner: [
       "  ╔══════════════════════════════════════════╗",
       "  ║                                          ║",
-      "  ║       🚀 Timar AI MCP 設定精靈          ║",
+      "  ║       🚀 Temar AI MCP 設定精靈          ║",
       "  ║                                          ║",
       "  ║   接下來將引導你完成 MCP 伺服器設定     ║",
       "  ║   大約需要 2 分鐘                        ║",
@@ -183,7 +183,7 @@ const i18n = {
     envBoth: "兩個都設定（Sandbox + Production）",
     envRecommended: "（建議）",
     configSection: (envName) => `── 設定 ${envName} 環境 ──`,
-    configHint: (envName) => `請輸入你的 Timar ${envName} 環境資訊`,
+    configHint: (envName) => `請輸入你的 Temar ${envName} 環境資訊`,
     domainPrompt: (envName) => `🌐 ${envName} API 網域`,
     apiKeyPrompt: (envName) => `🔑 ${envName} API Key`,
     secretKeyPrompt: (envName) => `🔐 ${envName} Secret Key`,
@@ -231,7 +231,7 @@ const i18n = {
     banner: [
       "  ╔══════════════════════════════════════════╗",
       "  ║                                          ║",
-      "  ║       🚀 Timar AI MCP Setup Wizard      ║",
+      "  ║       🚀 Temar AI MCP Setup Wizard      ║",
       "  ║                                          ║",
       "  ║   This wizard will guide you through     ║",
       "  ║   MCP server configuration (~2 min)      ║",
@@ -246,7 +246,7 @@ const i18n = {
     envBoth: "Both (Sandbox + Production)",
     envRecommended: " (Recommended)",
     configSection: (envName) => `── Configure ${envName} Environment ──`,
-    configHint: (envName) => `Enter your Timar ${envName} environment details`,
+    configHint: (envName) => `Enter your Temar ${envName} environment details`,
     domainPrompt: (envName) => `🌐 ${envName} API Domain`,
     apiKeyPrompt: (envName) => `🔑 ${envName} API Key`,
     secretKeyPrompt: (envName) => `🔐 ${envName} Secret Key`,
@@ -456,11 +456,11 @@ function stepPrintIntegration(configPath, t) {
   log(`  \`\`\`json`);
   log(`  {`);
   log(`    "mcpServers": {`);
-  log(`      "timar-ai": {`);
+  log(`      "temar-ai": {`);
   log(`        "command": "node",`);
   log(`        "args": ["${startScript}"],`);
   log(`        "env": {`);
-  log(`          "TIMAR_MCP_CONFIG": "${configPathJson}"`);
+  log(`          "TEMAR_MCP_CONFIG": "${configPathJson}"`);
   log(`        }`);
   log(`      }`);
   log(`    }`);
@@ -475,11 +475,11 @@ function stepPrintIntegration(configPath, t) {
   log(`  \`\`\`json`);
   log(`  {`);
   log(`    "mcpServers": {`);
-  log(`      "timar-ai": {`);
+  log(`      "temar-ai": {`);
   log(`        "command": "node",`);
   log(`        "args": ["${startScript}"],`);
   log(`        "env": {`);
-  log(`          "TIMAR_MCP_CONFIG": "${configPathJson}"`);
+  log(`          "TEMAR_MCP_CONFIG": "${configPathJson}"`);
   log(`        }`);
   log(`      }`);
   log(`    }`);
@@ -490,7 +490,7 @@ function stepPrintIntegration(configPath, t) {
   // Quick test
   log(`${BOLD}  ${t.quickTest}${RESET}`);
   log(`  \`\`\`bash`);
-  log(`  TIMAR_MCP_CONFIG="${configPathJson}" node scripts/start-stdio-server.mjs`);
+  log(`  TEMAR_MCP_CONFIG="${configPathJson}" node scripts/start-stdio-server.mjs`);
   log(`  \`\`\``);
   log("");
 

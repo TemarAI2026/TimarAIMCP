@@ -37,7 +37,7 @@ export class BaseApiClient {
     const timeout = setTimeout(() => controller.abort(), params.environment.timeoutMs);
 
     try {
-      this.logger.debug("Executing outbound Timar API request.", {
+      this.logger.debug("Executing outbound Temar API request.", {
         environment: params.environment.name,
         method: params.method,
         path: params.path,

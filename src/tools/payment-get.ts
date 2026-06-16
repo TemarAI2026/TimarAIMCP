@@ -10,7 +10,7 @@ export function createPaymentGetTool(
   return {
     name: "payment.get",
     title: "Get Payment",
-    description: "Get a Timar payment order by platform order ID.",
+    description: "Get a Temar payment order by platform order ID.",
     inputSchema: {
       type: "object",
       properties: {

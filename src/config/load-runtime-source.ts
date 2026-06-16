@@ -3,13 +3,13 @@ import { join, resolve } from "node:path";
 import { loadConfigFromObject } from "./config-loader.ts";
 import type { RuntimeConfig } from "../models/public-api-types.ts";
 
-const ENV_PREFIX = "TIMAR_MCP_";
+const ENV_PREFIX = "TEMAR_MCP_";
 
 /**
  * Load runtime configuration.
  *
  * Priority:
- * 1. If TIMAR_MCP_CONFIG is set, load from the specified JSON file
+ * 1. If TEMAR_MCP_CONFIG is set, load from the specified JSON file
  * 2. Otherwise, look for config/runtime.config.json in the project directory
  *
  * @returns Validated RuntimeConfig

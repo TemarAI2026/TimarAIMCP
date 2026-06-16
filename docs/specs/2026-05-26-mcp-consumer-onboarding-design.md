@@ -2,7 +2,7 @@
 
 ## Goal
 
-Define the next implementation slice for `TimarAIMCP` so external AI coding assistants can reliably connect to the MCP server with minimal guesswork.
+Define the next implementation slice for `TemarAIMCP` so external AI coding assistants can reliably connect to the MCP server with minimal guesswork.
 
 The focus of this slice is:
 
@@ -57,7 +57,7 @@ This repository remains:
 - a configuration adapter
 - an auth adapter
 - a capability router
-- a client for existing Timar public APIs
+- a client for existing Temar public APIs
 
 It does not become:
 
@@ -97,15 +97,15 @@ This is the default and recommended path for most MCP client users.
 
 The user sets environment variables such as:
 
-- `TIMAR_MCP_DEFAULT_ENVIRONMENT`
-- `TIMAR_MCP_SANDBOX_BASE_URL`
-- `TIMAR_MCP_SANDBOX_API_KEY`
-- `TIMAR_MCP_SANDBOX_SECRET_KEY`
-- `TIMAR_MCP_SANDBOX_TIMEOUT_MS`
-- `TIMAR_MCP_PRODUCTION_BASE_URL`
-- `TIMAR_MCP_PRODUCTION_API_KEY`
-- `TIMAR_MCP_PRODUCTION_SECRET_KEY`
-- `TIMAR_MCP_PRODUCTION_TIMEOUT_MS`
+- `TEMAR_MCP_DEFAULT_ENVIRONMENT`
+- `TEMAR_MCP_SANDBOX_BASE_URL`
+- `TEMAR_MCP_SANDBOX_API_KEY`
+- `TEMAR_MCP_SANDBOX_SECRET_KEY`
+- `TEMAR_MCP_SANDBOX_TIMEOUT_MS`
+- `TEMAR_MCP_PRODUCTION_BASE_URL`
+- `TEMAR_MCP_PRODUCTION_API_KEY`
+- `TEMAR_MCP_PRODUCTION_SECRET_KEY`
+- `TEMAR_MCP_PRODUCTION_TIMEOUT_MS`
 
 The server reads these values at startup and assembles the runtime config.
 
@@ -115,7 +115,7 @@ This is the optional path for teams that prefer checked local templates or struc
 
 The user sets:
 
-- `TIMAR_MCP_CONFIG=<absolute-or-relative-path>`
+- `TEMAR_MCP_CONFIG=<absolute-or-relative-path>`
 
 The pointed JSON file contains the canonical runtime config object:
 
@@ -139,7 +139,7 @@ The pointed JSON file contains the canonical runtime config object:
 }
 ```
 
-If `TIMAR_MCP_CONFIG` is present, the server should prefer the file input over environment assembly.
+If `TEMAR_MCP_CONFIG` is present, the server should prefer the file input over environment assembly.
 
 ## Runtime Loading Design
 
@@ -147,7 +147,7 @@ Add one focused runtime source loader that sits above the existing config valida
 
 Recommended flow:
 
-1. check whether `TIMAR_MCP_CONFIG` exists
+1. check whether `TEMAR_MCP_CONFIG` exists
 2. if present, load and parse the JSON file
 3. otherwise, assemble config from environment variables
 4. pass the result into the existing runtime config validation path
@@ -166,7 +166,7 @@ Recommended repository additions and updates:
 - `config/runtime.config.example.json`
   example file-based runtime config
 - `src/config/load-runtime-source.ts`
-  load config from `TIMAR_MCP_CONFIG` or environment variables and return a plain raw config object
+  load config from `TEMAR_MCP_CONFIG` or environment variables and return a plain raw config object
 - `scripts/start-stdio-server.mjs`
   use the runtime source loader instead of hard-coded fallback config
 
@@ -209,9 +209,9 @@ Startup must stop immediately when required configuration is missing.
 
 Examples of clear failures:
 
-- missing `TIMAR_MCP_DEFAULT_ENVIRONMENT` when no config file is provided
+- missing `TEMAR_MCP_DEFAULT_ENVIRONMENT` when no config file is provided
 - missing `baseUrl` or credentials for the selected environment
-- unreadable `TIMAR_MCP_CONFIG` path
+- unreadable `TEMAR_MCP_CONFIG` path
 - invalid JSON in the config file
 
 Error output should help the consumer fix the problem quickly without exposing secrets.
@@ -245,7 +245,7 @@ The repository README should explain the project in this order:
 
 README language should reinforce these points:
 
-- this MCP server calls existing Timar public APIs
+- this MCP server calls existing Temar public APIs
 - merchant and credential provisioning are prerequisites
 - the server does not replace business onboarding or permissions setup
 - signing is internal and should not be supplied by the MCP caller
@@ -286,7 +286,7 @@ The existing runtime smoke and protocol smoke should still pass after the startu
 This slice is complete when:
 
 1. a new user can configure the server through environment variables only
-2. a new user can configure the server through `TIMAR_MCP_CONFIG`
+2. a new user can configure the server through `TEMAR_MCP_CONFIG`
 3. `npm` is not required for understanding usage; direct Node invocation is documented
 4. README contains copy-paste client setup examples
 5. startup no longer relies on embedded sample credentials
@@ -327,7 +327,7 @@ Those should reuse the same runtime foundation rather than introducing separate 
 
 ## Bottom Line
 
-The next step for `TimarAIMCP` should make the repository easy to connect from external AI coding assistants without changing its core role.
+The next step for `TemarAIMCP` should make the repository easy to connect from external AI coding assistants without changing its core role.
 
 The result should be:
 
