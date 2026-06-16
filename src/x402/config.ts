@@ -2,9 +2,13 @@
  * X402 adapter configuration schema.
  *
  * Extends the base MCP runtime config with x402-specific fields:
- * - wallet address for receiving payments
+ * - fallback wallet address (payTo) — used when Timar API doesn't return a receiveAddress
  * - facilitator URL for payment verification and settlement
- * - optional custom pricing overrides
+ * - supported payment networks
+ *
+ * NOTE: In the current two-phase architecture, the actual payTo in 402 responses
+ * comes from Timar API's receiveAddress (for payment.create) or withdrawAddress
+ * (for payout.create). The config's payTo field serves as a fallback only.
  */
 
 import { McpRuntimeError } from "../errors/error-types.ts";
@@ -21,13 +25,13 @@ export interface X402Config {
   /** HTTP server port */
   port: number;
 
-  /** Wallet address that receives x402 payments */
+  /** Fallback wallet address for 402 responses (actual payTo comes from Timar API) */
   payTo: string;
 
   /** Facilitator base URL (e.g. "https://facilitator.x402.org") */
   facilitatorUrl: string;
 
-  /** Optional pricing overrides per tool */
+  /** @deprecated Optional pricing overrides per tool (legacy — dynamic pricing is now used) */
   customPricing?: ToolPricingMap;
 
   /** Supported payment networks (default: ["base", "ethereum", "solana"]) */

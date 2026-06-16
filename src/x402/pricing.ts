@@ -1,9 +1,14 @@
 /**
- * X402 pricing configuration for each MCP tool endpoint.
+ * X402 pricing types — legacy from fixed-price mode.
  *
- * Prices are in USD (stablecoin equivalent). The x402 middleware uses
- * these values to set the `maxAmountRequired` field in PAYMENT-REQUIRED
- * responses.
+ * ⚠️ NOTE: The current architecture uses DYNAMIC pricing for transfer operations.
+ *   - payment.create / payout.create: The 402 amount comes from Timar API response
+ *     (actual transfer amount), NOT from this pricing table.
+ *   - Read-only endpoints: No X402 payment at all (MCP API Key auth).
+ *
+ * This file is kept only for the ToolPricingMap type definition,
+ * which may be used for future custom pricing features.
+ * The DEFAULT_TOOL_PRICING and resolvePricing() are DEPRECATED.
  */
 
 export interface EndpointPricing {
@@ -17,42 +22,46 @@ export interface EndpointPricing {
 
 export type ToolPricingMap = Record<string, EndpointPricing>;
 
+/**
+ * @deprecated Dynamic pricing is now used for transfer operations.
+ * This constant is kept for reference only.
+ */
 export const DEFAULT_TOOL_PRICING: ToolPricingMap = {
   "payment.create": {
-    price: "0.01",
-    description: "Create a crypto payment order",
+    price: "dynamic",
+    description: "Create a crypto payment order (X402 amount = actual transfer amount)",
     networks: ["base", "ethereum", "solana"],
   },
   "payment.get": {
-    price: "0.001",
-    description: "Query payment order status",
+    price: "0",
+    description: "Query payment order status (no payment required)",
     networks: ["base", "ethereum", "solana"],
   },
   "payment.cancel": {
-    price: "0.001",
-    description: "Cancel a pending payment order",
+    price: "0",
+    description: "Cancel a pending payment order (no payment required)",
     networks: ["base", "ethereum", "solana"],
   },
   "payout.create": {
-    price: "0.01",
-    description: "Create a crypto payout (withdrawal) order",
+    price: "dynamic",
+    description: "Create a crypto payout order (X402 amount = actual payout amount)",
     networks: ["base", "ethereum", "solana"],
   },
   "payout.get": {
-    price: "0.001",
-    description: "Query payout order status",
+    price: "0",
+    description: "Query payout order status (no payment required)",
     networks: ["base", "ethereum", "solana"],
   },
   "balance.list": {
-    price: "0.001",
-    description: "List merchant balance across currencies",
+    price: "0",
+    description: "List merchant balance (no payment required)",
     networks: ["base", "ethereum", "solana"],
   },
 };
 
 /**
- * Resolve pricing for a tool name. Returns the configured price or
- * a default if the tool is not listed.
+ * @deprecated Dynamic pricing is now used for transfer operations.
+ * This function is kept for reference only.
  */
 export function resolvePricing(
   toolName: string,
@@ -61,7 +70,7 @@ export function resolvePricing(
   const pricing = customPricing ?? DEFAULT_TOOL_PRICING;
   return (
     pricing[toolName] ?? {
-      price: "0.01",
+      price: "dynamic",
       description: `Use ${toolName}`,
       networks: ["base", "ethereum", "solana"],
     }

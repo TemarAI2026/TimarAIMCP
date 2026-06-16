@@ -57,7 +57,7 @@ The setup wizard supports 3 languages:
 ### 1. Clone and Install
 
 ```bash
-git clone https://github.com/your-org/TimarAIMCP.git
+git clone https://github.com/TemarAI2026/TimarAIMCP.git
 cd TimarAIMCP
 npm install
 ```
