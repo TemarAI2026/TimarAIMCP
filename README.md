@@ -96,7 +96,7 @@ Example walkthrough (简体中文):
     2. Production（生产环境）
     3. 两个都配置
 
-  ❯ 🌐 Sandbox API 域名 [https://sandbox-api.timar.io]:
+  ❯ 🌐 Sandbox API 域名 [https://sandbox-api.temar.ai]:
   ❯ 🔑 Sandbox API Key: ****
   ❯ 🔐 Sandbox Secret Key: ****
 
@@ -142,7 +142,7 @@ cp config/runtime.config.example.json config/runtime.config.json
   "defaultEnvironment": "sandbox",
   "environments": {
     "sandbox": {
-      "baseUrl": "https://sandbox-api.timar.io",
+      "baseUrl": "https://sandbox-api.temar.ai",
       "apiKey": "your-sandbox-api-key",
       "secretKey": "your-sandbox-secret-key",
       "timeoutMs": 5000

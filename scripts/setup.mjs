@@ -324,8 +324,8 @@ async function stepConfigureEnvironment(rl, envName, t) {
 
   const defaultDomain =
     envName === "Sandbox"
-      ? "https://sandbox-api.timar.io"
-      : "https://api.timar.io";
+      ? "https://sandbox-api.temar.ai"
+      : "https://api.temar.ai";
 
   const baseUrl = await question(rl, t.domainPrompt(envName), defaultDomain);
 

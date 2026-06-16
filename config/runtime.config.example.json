@@ -3,13 +3,13 @@
   "defaultEnvironment": "sandbox",
   "environments": {
     "sandbox": {
-      "baseUrl": "https://sandbox-api.timar.io",
+      "baseUrl": "https://sandbox-api.temar.ai",
       "apiKey": "your-sandbox-api-key",
       "secretKey": "your-sandbox-secret-key",
       "timeoutMs": 5000
     },
     "production": {
-      "baseUrl": "https://api.timar.io",
+      "baseUrl": "https://api.temar.ai",
       "apiKey": "your-production-api-key",
       "secretKey": "your-production-secret-key",
       "timeoutMs": 5000
